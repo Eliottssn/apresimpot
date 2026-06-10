@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Après impôt — Simulateur PEA vs Assurance-vie vs CTO vs PER (2026)</title>
+<meta name="description" content="Comparez le capital net après fiscalité entre PEA, assurance-vie, compte-titres et PER selon votre TMI, votre horizon et vos versements. Rachats fractionnés, déduction PER, barèmes 2026.">
+<link rel="canonical" href="https://www.apresimpot.fr/">
+<meta property="og:title" content="Après impôt — Simulateur PEA vs Assurance-vie vs CTO">
+<meta property="og:description" content="Le seul chiffre qui compte : ce qu'il vous reste après impôt. Comparateur fiscal des enveloppes d'épargne françaises.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Public+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Après impôt — Simulateur PEA / Assurance-vie / CTO",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Web",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"},
+  "inLanguage": "fr"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {"@type": "Question", "name": "PEA ou assurance-vie : lequel est le plus avantageux fiscalement ?", "acceptedAnswer": {"@type": "Answer", "text": "Après 5 ans, le PEA n'est soumis qu'aux prélèvements sociaux de 17,2 % sur les gains. L'assurance-vie après 8 ans bénéficie d'un abattement annuel de 4 600 € (9 200 € pour un couple) puis d'un taux de 7,5 % + 17,2 %. Pour un investissement actions long terme, le PEA est généralement plus efficace ; l'assurance-vie reprend l'avantage pour la transmission et la diversification."}},
+    {"@type": "Question", "name": "Quelle est la fiscalité d'un compte-titres ordinaire (CTO) ?", "acceptedAnswer": {"@type": "Answer", "text": "Les plus-values et dividendes du CTO sont soumis au PFU de 30 % (12,8 % d'impôt sur le revenu + 17,2 % de prélèvements sociaux). L'option pour le barème progressif peut être préférable si votre TMI est de 0 % ou 11 %."}},
+    {"@type": "Question", "name": "Que se passe-t-il si je retire de mon PEA avant 5 ans ?", "acceptedAnswer": {"@type": "Answer", "text": "Un retrait avant 5 ans entraîne en principe la clôture du plan et l'imposition des gains au PFU de 30 %. Après 5 ans, les retraits sont possibles sans clôture et les gains ne supportent que les prélèvements sociaux de 17,2 %."}},
+    {"@type": "Question", "name": "L'abattement de l'assurance-vie s'applique-t-il chaque année ?", "acceptedAnswer": {"@type": "Answer", "text": "Oui. Après 8 ans, l'abattement de 4 600 € (9 200 € pour un couple) s'applique chaque année sur la part de gains rachetée. Fractionner ses rachats sur plusieurs années permet donc de réduire fortement, voire d'annuler, l'impôt sur le revenu."}},
+    {"@type": "Question", "name": "Le PER est-il plus intéressant que le PEA ou l'assurance-vie ?", "acceptedAnswer": {"@type": "Answer", "text": "Le PER permet de déduire les versements du revenu imposable (économie immédiate égale à votre TMI), mais le capital est imposé au barème à la sortie et les fonds sont bloqués jusqu'à la retraite. Il est surtout pertinent si votre TMI actuelle (30 % et plus) est nettement supérieure à votre TMI prévisible à la retraite."}}
+  ]
+}
+</script>
+<style>
+:root{
+  --ink:#16263D;
+  --paper:#F4F7FA;
+  --card:#FFFFFF;
+  --net:#0E7C5B;
+  --net-soft:#E2F2EC;
+  --tax:#B23A2F;
+  --tax-soft:#F7E7E4;
+  --capital:#9DAFC6;
+  --capital-soft:#EAEFF5;
+  --line:#DCE4EC;
+  --muted:#5B6B80;
+  --focus:#16263D;
+  --radius:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{
+  font-family:'Public Sans',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.55;
+  font-size:16px;
+}
+.mono{font-family:'Spline Sans Mono',monospace;font-variant-numeric:tabular-nums}
+a{color:var(--ink)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+
+/* ---------- header ---------- */
+header{
+  border-bottom:1px solid var(--line);
+  background:var(--card);
+}
+.header-in{
+  max-width:1180px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.logo{
+  font-family:'Archivo',sans-serif;font-weight:900;font-size:1.25rem;letter-spacing:-.02em;
+  text-decoration:none;
+}
+.logo .net-word{color:var(--net)}
+.tagline{color:var(--muted);font-size:.85rem}
+
+/* ---------- hero ---------- */
+.hero{max-width:1180px;margin:0 auto;padding:48px 24px 8px}
+.hero h1{
+  font-family:'Archivo',sans-serif;
+  font-weight:900;font-stretch:80%;
+  font-size:clamp(1.9rem,4.5vw,3.1rem);
+  letter-spacing:-.02em;line-height:1.08;
+  max-width:21ch;
+}
+.hero h1 .strike{position:relative;color:var(--muted);font-weight:700}
+.hero h1 .strike::after{
+  content:"";position:absolute;left:-2%;right:-2%;top:54%;height:.09em;background:var(--tax);transform:rotate(-2deg);
+}
+.hero p{margin-top:14px;max-width:62ch;color:var(--muted)}
+
+/* ---------- simulateur ---------- */
+.sim{
+  max-width:1180px;margin:32px auto 0;padding:0 24px;
+  display:grid;grid-template-columns:340px 1fr;gap:24px;align-items:start;
+}
+@media(max-width:880px){.sim{grid-template-columns:1fr}}
+.panel{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;position:sticky;top:16px;
+}
+@media(max-width:880px){.panel{position:static}}
+.panel h2,.results h2{
+  font-family:'Archivo',sans-serif;font-weight:700;font-size:1rem;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;
+}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:5px}
+.field .hint{font-weight:400;color:var(--muted)}
+.field input[type=number],.field select{
+  width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;
+  font-family:'Spline Sans Mono',monospace;font-size:.95rem;background:var(--paper);color:var(--ink);
+}
+.field input:focus,.field select:focus{border-color:var(--ink)}
+.seg{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{
+  flex:1;padding:8px 4px;border:0;background:var(--card);font-family:inherit;font-size:.85rem;
+  cursor:pointer;color:var(--muted);font-weight:600;
+}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+details.advanced{border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
+details.advanced summary{cursor:pointer;font-size:.85rem;font-weight:600;color:var(--muted)}
+details.advanced .field{margin-top:14px}
+
+/* ---------- résultats ---------- */
+.results{min-width:0}
+.verdict{
+  background:var(--ink);color:#fff;border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:18px;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.verdict .label{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;opacity:.75}
+.verdict .winner{font-family:'Archivo',sans-serif;font-weight:900;font-size:1.5rem}
+.verdict .saving{font-size:.95rem}
+.verdict .saving strong{color:#7FD9B9;font-family:'Spline Sans Mono',monospace}
+.env-card{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:20px 22px;margin-bottom:14px;
+}
+.env-card.best{border-color:var(--net);box-shadow:0 0 0 1px var(--net)}
+.env-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.env-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:1.1rem}
+.env-rank{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.env-card.best .env-rank{color:var(--net)}
+.env-net{font-family:'Spline Sans Mono',monospace;font-weight:700;font-size:1.45rem}
+.env-net small{font-size:.75rem;font-weight:400;color:var(--muted);font-family:'Public Sans',sans-serif;display:block;text-align:right}
+
+/* barre de décomposition — élément signature */
+.bar{
+  display:flex;height:30px;border-radius:6px;overflow:hidden;margin:12px 0 8px;
+  border:1px solid var(--line);
+}
+.bar div{transition:width .45s cubic-bezier(.2,.8,.2,1);min-width:0}
+.bar .b-cap{background:var(--capital)}
+.bar .b-gain{background:var(--net)}
+.bar .b-tax{background:var(--tax)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.legend .l-cap::before{background:var(--capital)}
+.legend .l-gain::before{background:var(--net)}
+.legend .l-tax::before{background:var(--tax)}
+.env-detail{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.env-detail summary{cursor:pointer;font-size:.83rem;font-weight:600;color:var(--muted)}
+.env-detail table{width:100%;border-collapse:collapse;margin-top:8px;font-size:.85rem}
+.env-detail td{padding:4px 0;border-bottom:1px solid var(--paper)}
+.env-detail td:last-child{text-align:right}
+.env-detail tr.t-tax td{color:var(--tax)}
+.env-detail tr.t-net td{font-weight:700}
+.env-note{font-size:.8rem;color:var(--muted);margin-top:8px}
+.env-warn{font-size:.8rem;color:var(--tax);margin-top:8px;font-weight:600}
+
+/* ---------- sections contenu ---------- */
+section.content{max-width:860px;margin:64px auto 0;padding:0 24px}
+section.content h2{
+  font-family:'Archivo',sans-serif;font-weight:900;font-stretch:85%;
+  font-size:1.6rem;letter-spacing:-.01em;margin-bottom:16px;
+}
+section.content h3{font-family:'Archivo',sans-serif;font-weight:700;font-size:1.05rem;margin:22px 0 8px}
+section.content p{margin-bottom:12px;color:#2A3A50}
+section.content p strong{color:var(--ink)}
+
+/* affiliation */
+.brokers{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:18px}
+.broker{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.broker .b-env{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--net)}
+.broker .b-name{font-family:'Archivo',sans-serif;font-weight:700;font-size:1.05rem}
+.broker p{font-size:.85rem;color:var(--muted);margin:0;flex:1}
+.broker a{
+  display:inline-block;text-align:center;background:var(--ink);color:#fff;text-decoration:none;
+  padding:9px 14px;border-radius:7px;font-weight:600;font-size:.88rem;
+}
+.aff-note{font-size:.75rem;color:var(--muted);margin-top:10px}
+
+/* FAQ */
+.faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.faq summary{cursor:pointer;font-weight:600;font-size:.97rem}
+.faq details p{margin-top:8px;font-size:.92rem}
+
+footer{
+  margin-top:72px;border-top:1px solid var(--line);background:var(--card);
+}
+.footer-in{max-width:1180px;margin:0 auto;padding:28px 24px;font-size:.78rem;color:var(--muted)}
+.footer-in p{margin-bottom:8px;max-width:90ch}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-in">
+    <a class="logo" href="/">après<span class="net-word">impôt</span>.fr</a>
+    <nav style="display:flex;gap:18px;align-items:baseline">
+      <span class="tagline">Comparateur fiscal des enveloppes d'épargne — barèmes 2026</span>
+      <a href="guides/index.html" style="font-size:.9rem;font-weight:600;text-decoration:none;color:var(--muted)">Guides</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Le rendement <span class="strike">brut</span> ne paie pas vos projets.<br>Le net après impôt, si.</h1>
+  <p>À versements et rendement identiques, le choix de l'enveloppe — PEA, assurance-vie, compte-titres ou PER — peut représenter des dizaines de milliers d'euros d'écart à la sortie. Entrez vos paramètres : le simulateur calcule instantanément ce qu'il vous restera réellement.</p>
+</div>
+
+<main class="sim">
+  <form class="panel" id="form" aria-label="Paramètres de simulation">
+    <h2>Vos paramètres</h2>
+
+    <div class="field">
+      <label for="p0">Versement initial <span class="hint">(€)</span></label>
+      <input class="mono" type="number" id="p0" value="10000" min="0" step="500">
+    </div>
+
+    <div class="field">
+      <label for="pm">Versement mensuel <span class="hint">(€)</span></label>
+      <input class="mono" type="number" id="pm" value="300" min="0" step="50">
+    </div>
+
+    <div class="field">
+      <label for="years">Horizon <span class="hint">(années)</span></label>
+      <input class="mono" type="number" id="years" value="15" min="1" max="50" step="1">
+    </div>
+
+    <div class="field">
+      <label for="ret">Rendement annuel brut espéré <span class="hint">(%)</span></label>
+      <input class="mono" type="number" id="ret" value="6" min="-5" max="20" step="0.5">
+    </div>
+
+    <div class="field">
+      <label for="tmi">Tranche marginale d'imposition (TMI)</label>
+      <select id="tmi">
+        <option value="0">0 %</option>
+        <option value="11">11 %</option>
+        <option value="30" selected>30 %</option>
+        <option value="41">41 %</option>
+        <option value="45">45 %</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="tmi-ret">TMI estimée à la retraite <span class="hint">(PER)</span></label>
+      <select id="tmi-ret">
+        <option value="0">0 %</option>
+        <option value="11" selected>11 %</option>
+        <option value="30">30 %</option>
+        <option value="41">41 %</option>
+        <option value="45">45 %</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="av-spread">Sortie de l'assurance-vie</label>
+      <select id="av-spread">
+        <option value="1" selected>Rachat total à l'horizon</option>
+        <option value="2">Étalée sur 2 ans</option>
+        <option value="3">Étalée sur 3 ans</option>
+        <option value="4">Étalée sur 4 ans</option>
+        <option value="5">Étalée sur 5 ans</option>
+        <option value="8">Étalée sur 8 ans</option>
+        <option value="10">Étalée sur 10 ans</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label id="lab-situation">Situation fiscale</label>
+      <div class="seg" role="group" aria-labelledby="lab-situation">
+        <button type="button" id="seg-single" aria-pressed="true">Seul·e</button>
+        <button type="button" id="seg-couple" aria-pressed="false">Couple</button>
+      </div>
+    </div>
+
+    <details class="advanced">
+      <summary>Frais annuels par enveloppe</summary>
+      <div class="field">
+        <label for="f-pea">PEA <span class="hint">(% / an — courtier en ligne ≈ 0,1 %)</span></label>
+        <input class="mono" type="number" id="f-pea" value="0.1" min="0" max="5" step="0.05">
+      </div>
+      <div class="field">
+        <label for="f-av">Assurance-vie <span class="hint">(% / an — gestion + UC, contrat en ligne ≈ 0,85 %)</span></label>
+        <input class="mono" type="number" id="f-av" value="0.85" min="0" max="5" step="0.05">
+      </div>
+      <div class="field">
+        <label for="f-cto">CTO <span class="hint">(% / an)</span></label>
+        <input class="mono" type="number" id="f-cto" value="0.1" min="0" max="5" step="0.05">
+      </div>
+      <div class="field">
+        <label for="f-per">PER <span class="hint">(% / an — PER en ligne ≈ 0,6 %)</span></label>
+        <input class="mono" type="number" id="f-per" value="0.6" min="0" max="5" step="0.05">
+      </div>
+      <div class="field">
+        <label for="per-reinvest"><input type="checkbox" id="per-reinvest" checked> Réinvestir l'économie d'impôt du PER dans le plan</label>
+        <span class="hint">Décoché : l'économie d'impôt est perçue mais laissée en cash (non capitalisée).</span>
+      </div>
+    </details>
+  </form>
+
+  <div class="results" aria-live="polite">
+    <div class="verdict" id="verdict">
+      <div>
+        <div class="label">Enveloppe la plus efficace sur votre horizon</div>
+        <div class="winner" id="v-winner">—</div>
+      </div>
+      <div class="saving" id="v-saving"></div>
+    </div>
+    <div id="cards"></div>
+  </div>
+</main>
+
+<section class="content">
+  <h2>Méthodologie et hypothèses</h2>
+  <p>Le simulateur capitalise vos versements mensuellement au rendement brut indiqué, diminué des frais annuels propres à chaque enveloppe, puis applique la fiscalité d'un <strong>rachat total à l'horizon choisi</strong>, selon les barèmes en vigueur en 2026.</p>
+  <h3>PEA</h3>
+  <p>Après 5 ans de détention, les gains sont exonérés d'impôt sur le revenu et supportent uniquement les prélèvements sociaux de 17,2 %. Avant 5 ans, un retrait entraîne en principe la clôture du plan et l'imposition au PFU de 30 %. Le plafond de versements est de 150 000 €.</p>
+  <h3>Assurance-vie</h3>
+  <p>Après 8 ans, les gains rachetés bénéficient d'un abattement annuel de 4 600 € (9 200 € pour un couple soumis à imposition commune), puis sont imposés à 7,5 % pour la part des primes inférieure à 150 000 € (12,8 % au-delà), plus 17,2 % de prélèvements sociaux. Avant 8 ans, le PFU de 30 % s'applique. Le simulateur permet de modéliser une <strong>sortie étalée sur plusieurs années</strong> : l'abattement s'appliquant chaque année civile, le fractionnement réduit fortement, voire annule, l'impôt sur le revenu (modélisation conservatrice : pas de rendement pendant la phase d'étalement). Les prélèvements sociaux sont modélisés à la sortie (en réalité prélevés annuellement sur le fonds en euros).</p>
+  <h3>PER (sortie en capital)</h3>
+  <p>Les versements volontaires sont déduits du revenu imposable, dans la limite du plafond épargne retraite (environ 10 % des revenus professionnels). L'économie d'impôt immédiate est égale à votre TMI actuelle. À la sortie en capital, la part correspondant aux versements déduits est imposée au barème (votre TMI à la retraite) et les gains au PFU de 30 %. Par défaut, le simulateur suppose l'économie d'impôt <strong>réinvestie dans le plan</strong> (versement effectif majoré), ce qui est la comparaison à effort d'épargne égal. Rappel : les fonds sont bloqués jusqu'à la retraite, hors cas de déblocage anticipé prévus par la loi.</p>
+  <h3>Compte-titres ordinaire (CTO)</h3>
+  <p>Les gains sont soumis au PFU de 30 % (12,8 % + 17,2 %). Si votre TMI est de 0 % ou 11 %, le simulateur retient automatiquement l'option pour le barème progressif lorsqu'elle est plus favorable (hors effet de la CSG déductible, ignoré ici par prudence). Le CTO suppose par ailleurs une absence d'arbitrages en cours de route : chaque vente intermédiaire déclencherait l'imposition, ce que le PEA et l'assurance-vie évitent.</p>
+  <p>Ce simulateur fournit une information générique à visée pédagogique. Il ne constitue ni un conseil en investissement ni un conseil fiscal personnalisé.</p>
+</section>
+
+<section class="content" id="ouvrir">
+  <h2>Où ouvrir ces enveloppes sans frais inutiles</h2>
+  <p>Les frais d'entrée et de gestion sont la seule variable que vous contrôlez à 100 %. Les acteurs en ligne ci-dessous pratiquent des frais parmi les plus bas du marché.</p>
+  <div class="brokers">
+    <!-- AFFILIATION : remplacer les href="#" par vos liens trackés une fois inscrit aux programmes (BoursoBank, Trade Republic, Linxea, etc.) -->
+    <div class="broker">
+      <span class="b-env">PEA</span>
+      <span class="b-name">Courtier en ligne</span>
+      <p>0 € de droits de garde, frais de courtage plafonnés par la loi Pacte. Idéal pour les ETF actions long terme.</p>
+      <a href="#" data-affiliate="pea" rel="sponsored nofollow">Comparer les PEA</a>
+    </div>
+    <div class="broker">
+      <span class="b-env">Assurance-vie</span>
+      <span class="b-name">Contrat en ligne</span>
+      <p>0 % de frais d'entrée et de versement, gestion autour de 0,5–0,85 %/an, large choix d'unités de compte.</p>
+      <a href="#" data-affiliate="av" rel="sponsored nofollow">Comparer les contrats</a>
+    </div>
+    <div class="broker">
+      <span class="b-env">CTO</span>
+      <span class="b-name">Courtier mobile</span>
+      <p>Ordres à ~1 €, accès aux marchés étrangers et aux titres non éligibles au PEA.</p>
+      <a href="#" data-affiliate="cto" rel="sponsored nofollow">Comparer les CTO</a>
+    </div>
+    <div class="broker">
+      <span class="b-env">PER</span>
+      <span class="b-name">PER en ligne</span>
+      <p>0 % de frais sur versements, gestion ≈ 0,6 %/an. Pertinent dès la TMI 30 % si votre TMI baissera à la retraite.</p>
+      <a href="#" data-affiliate="per" rel="sponsored nofollow">Comparer les PER</a>
+    </div>
+  </div>
+  <p class="aff-note">Certains liens de cette page sont des liens d'affiliation : ils peuvent donner lieu à une rémunération si vous ouvrez un compte, sans surcoût pour vous. Cela ne modifie ni les calculs ni les classements du simulateur.</p>
+</section>
+
+<section class="content faq">
+  <h2>Questions fréquentes</h2>
+  <details>
+    <summary>PEA ou assurance-vie : lequel choisir ?</summary>
+    <p>Pour de l'investissement en actions européennes (ou ETF éligibles) à plus de 5 ans, le PEA est presque toujours l'enveloppe la plus efficace fiscalement : 17,2 % sur les gains, contre au mieux 24,7 % au-delà de l'abattement en assurance-vie. L'assurance-vie reste pertinente pour diversifier (fonds euros, obligations, immobilier), pour les versements au-delà du plafond du PEA, et surtout pour la transmission (abattement de 152 500 € par bénéficiaire pour les primes versées avant 70 ans).</p>
+  </details>
+  <details>
+    <summary>Pourquoi le CTO ressort-il presque toujours dernier ?</summary>
+    <p>Parce qu'il cumule le taux le plus élevé (30 %) et l'absence d'abattement. Il reste pourtant indispensable pour les titres non éligibles au PEA (actions américaines en direct, certains ETF) et au-delà des plafonds. Sa fiscalité réelle peut aussi être pire que celle affichée ici : chaque arbitrage en cours de route déclenche l'impôt, là où PEA et assurance-vie capitalisent en franchise.</p>
+  </details>
+  <details>
+    <summary>Que se passe-t-il si je retire avant 5 ans (PEA) ou 8 ans (assurance-vie) ?</summary>
+    <p>Avant 5 ans, un retrait du PEA entraîne en principe sa clôture et l'imposition des gains au PFU de 30 %. En assurance-vie, un rachat avant 8 ans est imposé au PFU de 30 % sans abattement, mais le contrat n'est pas clôturé et son antériorité fiscale court toujours — d'où l'intérêt d'ouvrir tôt, même avec un petit montant, pour « prendre date ».</p>
+  </details>
+  <details>
+    <summary>L'abattement de 4 600 € de l'assurance-vie, comment ça marche exactement ?</summary>
+    <p>Après 8 ans, il s'applique chaque année civile sur la part de <em>gains</em> comprise dans vos rachats (pas sur le capital). Un rachat de 20 000 € contenant 5 000 € de gains n'est donc imposé à l'IR que sur 400 € pour un célibataire. En étalant les rachats, on peut sortir des sommes importantes sans payer d'impôt sur le revenu — seuls les 17,2 % de prélèvements sociaux restent dus.</p>
+  </details>
+  <details>
+    <summary>Le PER bat-il le PEA et l'assurance-vie ?</summary>
+    <p>Tout dépend de l'écart entre votre TMI actuelle et votre TMI à la retraite. La déduction à l'entrée est un levier puissant à 30 %, 41 % ou 45 % de TMI, surtout si l'économie d'impôt est réinvestie — mais le capital est imposé au barème à la sortie et les fonds sont bloqués jusqu'à la retraite. À TMI 11 % ou 0 %, le PER est rarement pertinent : préférez le PEA. Testez les deux TMI dans le simulateur pour voir le point de bascule.</p>
+  </details>
+</section>
+
+<section class="content faq">
+  <h2>Pour aller plus loin</h2>
+  <details open>
+    <summary>Nos guides chiffrés</summary>
+    <p>
+      <a href="guides/pea-ou-cto-etf.html">PEA ou CTO pour investir en ETF</a> ·
+      <a href="guides/fiscalite-rachat-assurance-vie-8-ans.html">Fiscalité d'un rachat d'assurance-vie après 8 ans</a> ·
+      <a href="guides/abattement-4600-assurance-vie.html">L'abattement de 4 600 € mode d'emploi</a> ·
+      <a href="guides/retrait-pea-avant-5-ans.html">Retrait du PEA avant 5 ans</a> ·
+      <a href="guides/per-ou-pea-tmi-30.html">PER ou PEA à TMI 30 %</a>
+    </p>
+  </details>
+</section>
+
+<footer>
+  <div class="footer-in">
+    <p><strong>aprèsimpôt.fr</strong> — Les informations publiées sur ce site sont fournies à titre purement informatif et pédagogique. Elles ne constituent en aucun cas un conseil en investissement, une recommandation personnalisée ou un conseil fiscal au sens de la réglementation. Les performances passées ne préjugent pas des performances futures. Investir comporte un risque de perte en capital. Barèmes fiscaux en vigueur à la date de mise à jour, susceptibles d'évoluer.</p>
+    <p>© 2026 aprèsimpôt.fr — Tous droits réservés. <a href="mentions-legales.html">Mentions légales</a></p>
+  </div>
+</footer>
+
+<script>
+"use strict";
+const PS = 0.172, PFU_IR = 0.128;
+const fmt = v => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
+
+function futureValue(p0, m, years, annualNet){
+  const n = years * 12, r = annualNet / 12;
+  if (Math.abs(r) < 1e-9) return p0 + m * n;
+  return p0 * Math.pow(1 + r, n) + m * ((Math.pow(1 + r, n) - 1) / r);
+}
+
+function taxPEA(g, years){
+  if (g <= 0) return {ir: 0, ps: 0, note: null};
+  if (years >= 5) return {ir: 0, ps: g * PS, note: "Après 5 ans : gains exonérés d'IR, prélèvements sociaux uniquement."};
+  return {ir: g * PFU_IR, ps: g * PS, note: "Horizon < 5 ans : retrait = clôture du plan et PFU 30 %."};
+}
+
+function taxAV(g, years, invested, couple, spread){
+  if (g <= 0) return {ir: 0, ps: 0, note: null};
+  const ps = g * PS;
+  if (years < 8) return {ir: g * PFU_IR, ps, note: "Horizon < 8 ans : PFU 30 %, sans abattement (l'étalement n'a pas d'effet)."};
+  const ab = couple ? 9200 : 4600;
+  let rate = 0.075;
+  if (invested > 150000){
+    const share = 150000 / invested;
+    rate = 0.075 * share + PFU_IR * (1 - share);
+  }
+  const perYear = g / spread;
+  const ir = spread * Math.max(0, perYear - ab) * rate;
+  const nOpt = Math.ceil(g / ab);
+  let note = spread === 1
+    ? "Après 8 ans : abattement de " + fmt(ab) + " puis " + (rate > 0.075 ? "7,5 % / 12,8 %" : "7,5 %") + " + 17,2 % PS, rachat total."
+    : "Sortie étalée sur " + spread + " ans : abattement de " + fmt(ab) + " réutilisé chaque année.";
+  if (ir === 0 && g > 0) note += " Impôt sur le revenu : 0 €.";
+  else if (nOpt > spread && nOpt <= 15) note += " Astuce : étalée sur " + nOpt + " ans, l'IR tomberait à 0 €.";
+  return {ir, ps, note};
+}
+
+function computePER(p0, pm, years, ret, fees, tmiNow, tmiRet, reinvest){
+  const n = years * 12, effort = p0 + pm * n;
+  const k = reinvest && tmiNow < 1 ? 1 / (1 - tmiNow) : 1;
+  const fv = futureValue(p0 * k, pm * k, years, ret - fees);
+  const investedGross = effort * k;
+  const gainsTrue = Math.max(0, fv - investedGross);
+  const ir = investedGross * tmiRet + gainsTrue * PFU_IR;
+  const ps = gainsTrue * PS;
+  const bonus = reinvest ? 0 : effort * tmiNow;
+  const fvDisplay = fv + bonus;
+  let note = "Déduction à l'entrée (TMI " + Math.round(tmiNow * 100) + " %) " +
+    (reinvest ? "réinvestie dans le plan. " : "perçue en cash, non capitalisée. ") +
+    "Sortie en capital : versements imposés au barème (TMI retraite " + Math.round(tmiRet * 100) + " %), gains au PFU 30 %.";
+  return {fv: fvDisplay, gains: Math.max(0, fvDisplay - effort), ir, ps, net: fvDisplay - ir - ps, note};
+}
+
+function taxCTO(g, tmi){
+  if (g <= 0) return {ir: 0, ps: 0, note: null};
+  const bareme = tmi / 100;
+  const useBareme = bareme < PFU_IR;
+  return {ir: g * Math.min(PFU_IR, bareme), ps: g * PS,
+    note: useBareme ? "Option barème retenue (TMI " + tmi + " % < 12,8 %), plus favorable que le PFU." : "PFU 30 % (12,8 % IR + 17,2 % PS)."};
+}
+
+function read(id){ return parseFloat(document.getElementById(id).value) || 0; }
+
+function run(){
+  const p0 = read('p0'), pm = read('pm'), years = Math.max(1, read('years')), ret = read('ret') / 100;
+  const tmi = parseInt(document.getElementById('tmi').value, 10);
+  const tmiRet = parseInt(document.getElementById('tmi-ret').value, 10) / 100;
+  const spread = parseInt(document.getElementById('av-spread').value, 10);
+  const reinvest = document.getElementById('per-reinvest').checked;
+  const couple = document.getElementById('seg-couple').getAttribute('aria-pressed') === 'true';
+  const invested = p0 + pm * years * 12;
+
+  const base = [
+    {key:'PEA', fees: read('f-pea')/100, tax: g => taxPEA(g, years),
+     warn: invested > 150000 ? "Versements totaux (" + fmt(invested) + ") supérieurs au plafond du PEA (150 000 €) : l'excédent devrait être logé ailleurs." : null},
+    {key:'Assurance-vie', fees: read('f-av')/100, tax: g => taxAV(g, years, invested, couple, spread), warn: null},
+    {key:'CTO', fees: read('f-cto')/100, tax: g => taxCTO(g, tmi), warn: null}
+  ].map(e => {
+    const fv = futureValue(p0, pm, years, ret - e.fees);
+    const gains = Math.max(0, fv - invested);
+    const t = e.tax(gains);
+    return {...e, fv, gains, ir: t.ir, ps: t.ps, net: fv - t.ir - t.ps, note: t.note};
+  });
+
+  const per = computePER(p0, pm, years, ret, read('f-per')/100, tmi/100, tmiRet, reinvest);
+  base.push({key:'PER', ...per,
+    warn: "Fonds bloqués jusqu'à la retraite (hors cas légaux de déblocage). Déduction limitée à votre plafond épargne retraite (≈ 10 % des revenus professionnels)."});
+
+  const envs = base.map(e => ({...e, totalTax: e.ir + e.ps})).sort((a, b) => b.net - a.net);
+
+  const best = envs[0], worst = envs[envs.length - 1];
+  document.getElementById('v-winner').textContent = best.key;
+  document.getElementById('v-saving').innerHTML = worst.net < best.net
+    ? "soit <strong>" + fmt(best.net - worst.net) + "</strong> de plus que " + worst.key + "<br>sur " + years + " ans, à rendement identique"
+    : "";
+
+  const cards = document.getElementById('cards');
+  cards.innerHTML = '';
+  const maxFv = Math.max(...envs.map(e => e.fv), 1);
+
+  envs.forEach((e, i) => {
+    const capPct = (invested / maxFv) * 100;
+    const gainNetPct = ((e.gains - e.totalTax) / maxFv) * 100;
+    const taxPct = (e.totalTax / maxFv) * 100;
+    const card = document.createElement('article');
+    card.className = 'env-card' + (i === 0 ? ' best' : '');
+    card.innerHTML =
+      '<div class="env-head">' +
+        '<div><span class="env-rank">' + (i === 0 ? '1er — le plus efficace' : (i + 1) + 'e') + '</span>' +
+        '<div class="env-name">' + e.key + '</div></div>' +
+        '<div><div class="env-net">' + fmt(e.net) + '</div><small>net après impôt</small></div>' +
+      '</div>' +
+      '<div class="bar" role="img" aria-label="' + e.key + ' : ' + fmt(invested) + ' versés, ' + fmt(Math.max(0, e.gains - e.totalTax)) + ' de gains nets, ' + fmt(e.totalTax) + ' de fiscalité">' +
+        '<div class="b-cap" style="width:' + capPct + '%"></div>' +
+        '<div class="b-gain" style="width:' + Math.max(0, gainNetPct) + '%"></div>' +
+        '<div class="b-tax" style="width:' + Math.max(0, taxPct) + '%"></div>' +
+      '</div>' +
+      '<div class="legend">' +
+        '<span class="l-cap">Versements ' + fmt(invested) + '</span>' +
+        '<span class="l-gain">Gains nets ' + fmt(Math.max(0, e.gains - e.totalTax)) + '</span>' +
+        '<span class="l-tax">Fiscalité ' + fmt(e.totalTax) + '</span>' +
+      '</div>' +
+      '<details class="env-detail"><summary>Détail du calcul</summary><table class="mono">' +
+        '<tr><td>Capital brut à ' + years + ' ans</td><td>' + fmt(e.fv) + '</td></tr>' +
+        '<tr><td>dont gains</td><td>' + fmt(e.gains) + '</td></tr>' +
+        '<tr class="t-tax"><td>Impôt sur le revenu</td><td>−' + fmt(e.ir) + '</td></tr>' +
+        '<tr class="t-tax"><td>Prélèvements sociaux (17,2 %)</td><td>−' + fmt(e.ps) + '</td></tr>' +
+        '<tr class="t-net"><td>Net perçu</td><td>' + fmt(e.net) + '</td></tr>' +
+      '</table></details>' +
+      (e.note ? '<p class="env-note">' + e.note + '</p>' : '') +
+      (e.warn ? '<p class="env-warn">' + e.warn + '</p>' : '');
+    cards.appendChild(card);
+  });
+}
+
+document.getElementById('form').addEventListener('input', run);
+['seg-single','seg-couple'].forEach(id => {
+  document.getElementById(id).addEventListener('click', () => {
+    document.getElementById('seg-single').setAttribute('aria-pressed', id === 'seg-single');
+    document.getElementById('seg-couple').setAttribute('aria-pressed', id === 'seg-couple');
+    run();
+  });
+});
+run();
+</script>
+</body>
+</html>
