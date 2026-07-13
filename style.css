@@ -29,7 +29,7 @@ body{
 }
 a{color:var(--bleu)}
 :focus-visible{outline:2px solid var(--bleu);outline-offset:2px;border-radius:2px}
-.mono{font-family:'Spline Sans Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mono{font-variant-numeric:tabular-nums}
 
 /* ---------- en-tête : bandeau institutionnel ---------- */
 body::before{content:"";display:block;height:4px;background:var(--bleu)}
@@ -127,6 +127,14 @@ footer{margin-top:72px;border-top:1px solid var(--trait);background:var(--trame)
 .guide-card a:hover{color:var(--bleu)}
 .guide-card p{font-size:.88rem;color:var(--gris);margin-top:6px;max-width:72ch}
 
-/* resserrer les séparateurs de milliers en police monospace */
-.mono,.env-net,.verdict .saving strong,.example td:last-child,.env-detail td:last-child,
-.field input[type=number],.field select{word-spacing:-.16em}
+/* montants : chiffres tabulaires, pas de monospace (l'espace fine U+202F
+   occupe une chasse pleine en monospace et creuse les nombres) */
+.example td:last-child{font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;font-weight:500}
+
+/* index des guides : regroupement par enveloppe */
+.guide-list h2{
+  font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:1.3rem;
+  letter-spacing:-.01em;margin:40px 0 2px;padding-bottom:10px;border-bottom:2px solid var(--encre);
+}
+.guide-list h2+.guide-card{border-top:0}
+.guide-list .crumb{margin-bottom:18px}

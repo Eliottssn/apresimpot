@@ -9,6 +9,12 @@
 <meta property="og:title" content="Après impôt — Simulateur PEA vs Assurance-vie vs CTO">
 <meta property="og:description" content="Le seul chiffre qui compte : ce qu'il vous reste après impôt. Comparateur fiscal des enveloppes d'épargne françaises.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://www.apresimpot.fr/">
+<meta property="og:site_name" content="aprèsimpôt.fr">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Simulateur fiscal PEA, assurance-vie, PER, compte-titres">
+<meta name="twitter:description" content="Le capital net après impôt, enveloppe par enveloppe. Barèmes 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&family=Public+Sans:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -100,9 +106,7 @@ details.advanced .field{margin-top:14px}
   letter-spacing:-.01em;margin-top:4px;
 }
 .verdict .saving{font-size:.88rem;color:var(--gris);text-align:right}
-.verdict .saving strong{
-  color:var(--bleu);font-family:'Spline Sans Mono',monospace;font-variant-numeric:tabular-nums;
-}
+.verdict .saving strong{color:var(--bleu);font-variant-numeric:tabular-nums;font-weight:700}
 
 /* une ligne de l'état = une enveloppe */
 .env-card{border-bottom:1px solid var(--trait);padding:20px 0 18px}
@@ -115,7 +119,7 @@ details.advanced .field{margin-top:14px}
 .env-card.best .env-rank{color:var(--bleu)}
 .env-name{font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:1.2rem;margin-top:2px}
 .env-net{
-  font-family:'Spline Sans Mono',monospace;font-variant-numeric:tabular-nums;
+  font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;
   font-weight:700;font-size:1.5rem;letter-spacing:-.02em;text-align:right;
 }
 .env-card.best .env-net{
@@ -400,7 +404,9 @@ const PS = 0.172, PFU_IR = 0.128;
 const fmt = v => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v);
 
 function futureValue(p0, m, years, annualNet){
-  const n = years * 12, r = annualNet / 12;
+  const n = years * 12;
+  // taux mensuel equivalent (et non proportionnel) : (1+i)^(1/12)-1
+  const r = annualNet <= -1 ? -1 : Math.pow(1 + annualNet, 1 / 12) - 1;
   if (Math.abs(r) < 1e-9) return p0 + m * n;
   return p0 * Math.pow(1 + r, n) + m * ((Math.pow(1 + r, n) - 1) / r);
 }
@@ -434,7 +440,8 @@ function taxAV(g, years, invested, couple, spread){
 
 function computePER(p0, pm, years, ret, fees, tmiNow, tmiRet, reinvest){
   const n = years * 12, effort = p0 + pm * n;
-  const k = reinvest && tmiNow < 1 ? 1 / (1 - tmiNow) : 1;
+  // economie d'impot = versement x TMI, reversee dans le plan : k = 1 + TMI
+  const k = reinvest ? 1 + tmiNow : 1;
   const fv = futureValue(p0 * k, pm * k, years, ret - fees);
   const investedGross = effort * k;
   const gainsTrue = Math.max(0, fv - investedGross);
@@ -443,7 +450,7 @@ function computePER(p0, pm, years, ret, fees, tmiNow, tmiRet, reinvest){
   const bonus = reinvest ? 0 : effort * tmiNow;
   const fvDisplay = fv + bonus;
   let note = "Déduction à l'entrée (TMI " + Math.round(tmiNow * 100) + " %) " +
-    (reinvest ? "réinvestie dans le plan. " : "perçue en cash, non capitalisée. ") +
+    (reinvest ? "réinvestie dans le plan l'année suivante : " + fmt(investedGross) + " effectivement versés pour " + fmt(effort) + " d'effort d'épargne. " : "perçue en cash, non capitalisée. ") +
     "Sortie en capital : versements imposés au barème (TMI retraite " + Math.round(tmiRet * 100) + " %), gains au PFU 30 %.";
   return {fv: fvDisplay, gains: Math.max(0, fvDisplay - effort), ir, ps, net: fvDisplay - ir - ps, note};
 }
